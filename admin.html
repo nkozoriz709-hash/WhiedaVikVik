@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель WHIEDA VikVik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f0f2f5;
+            color: #1e2a2a;
+        }
+        .admin-container { max-width: 1400px; margin: 0 auto; padding: 40px 24px; }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .admin-header h1 { font-size: 1.8rem; color: #1a5f4b; }
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .login-section {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 400px;
+            margin: 100px auto;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        .login-section input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .login-section button {
+            width: 100%;
+            background: #1a5f4b;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .admin-panel { display: none; }
+        
+        .admin-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6c757d;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: #1a5f4b;
+            color: white;
+        }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .admin-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .add-product-btn {
+            background: #1a5f4b;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+        
+        .products-table, .users-table {
+            background: white;
+            border-radius: 20px;
+            overflow-x: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: #f8f9fa;
+            padding: 16px;
+            text-align: left;
+            color: #1a5f4b;
+        }
+        td { padding: 16px; border-bottom: 1px solid #e9ecef; }
+        .product-img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
+        
+        .edit-btn, .delete-btn, .view-btn {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .edit-btn { color: #1a5f4b; }
+        .delete-btn { color: #e74c3c; }
+        .view-btn { color: #17a2b8; }
+        
+        .user-status {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .user-status.active { background: #d4edda; color: #155724; }
+        .user-status.banned { background: #f8d7da; color: #721c24; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .modal-body { padding: 24px; }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            font-family: inherit;
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        
+        /* Стили для вариантов товаров */
+        .variants-section {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .variants-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .variant-item {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .variant-name {
+            flex: 1;
+            min-width: 120px;
+        }
+        .variant-name input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .variant-price {
+            width: 120px;
+        }
+        .variant-price input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .variant-stock {
+            width: 100px;
+        }
+        .variant-stock input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .remove-variant {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .add-variant-btn {
+            background: #1a5f4b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        
+        .variant-tag {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+        
+        .btn-primary { background: #1a5f4b; color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; }
+        .btn-secondary { background: #e9ecef; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1a5f4b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            z-index: 1100;
+        }
+        
+        .user-detail-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            .admin-tabs { flex-wrap: wrap; }
+            .variant-item { flex-direction: column; align-items: stretch; }
+            .variant-name, .variant-price, .variant-stock { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div id="loginSection" class="login-section">
+            <h2><i class="fas fa-user-shield"></i> Вход в админ-панель</h2>
+            <input type="password" id="adminPassword" placeholder="Введите пароль">
+            <button id="loginBtn">Войти</button>
+            <p style="margin-top: 16px; color: #6c757d;">Пароль: admin123</p>
+        </div>
+
+        <div id="adminPanel" class="admin-panel">
+            <div class="admin-header">
+                <h1><i class="fas fa-store"></i> Управление WHIEDA VikVik</h1>
+                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="products">📦 Товары</button>
+                <button class="tab-btn" data-tab="users">👥 Пользователи</button>
+                <button class="tab-btn" data-tab="notifications">📨 Рассылка</button>
+            </div>
+
+            <div id="productsTab" class="tab-content active">
+                <div class="admin-actions">
+                    <button class="add-product-btn" id="addProductBtn"><i class="fas fa-plus"></i> Добавить товар</button>
+                </div>
+                <div class="products-table">
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Фото</th><th>Название</th><th>Категория</th><th>Цена</th><th>Варианты</th><th>Действия</th></tr>
+                        </thead>
+                        <tbody id="productsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="usersTab" class="tab-content">
+                <div class="admin-actions">
+                    <h3><i class="fas fa-users"></i> Все пользователи</h3>
+                </div>
+                <div class="users-table">
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Имя / Дата рег.</th><th>Email</th><th>Телефон</th><th>Уведомлений</th><th>Статус</th><th>Действия</th></tr>
+                        </thead>
+                        <tbody id="adminUsersList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="notificationsTab" class="tab-content">
+                <div class="admin-actions">
+                    <h3><i class="fas fa-bell"></i> Создать рассылку</h3>
+                </div>
+                <div style="background: white; border-radius: 20px; padding: 24px;">
+                    <div class="form-group">
+                        <label>Тип уведомления</label>
+                        <select id="notifType">
+                            <option value="info">📢 Информация</option>
+                            <option value="success">✅ Успех/Подтверждение</option>
+                            <option value="warning">⚠️ Предупреждение</option>
+                            <option value="discount">🏷️ Скидка/Акция</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Заголовок уведомления</label>
+                        <input type="text" id="notifTitle" placeholder="Например: Скидка 20% на весь ассортимент!">
+                    </div>
+                    <div class="form-group">
+                        <label>Текст уведомления</label>
+                        <textarea id="notifMessage" rows="4" placeholder="Подробное описание акции или новости..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Получатели</label>
+                        <select id="notifRecipients">
+                            <option value="all">📨 Все пользователи</option>
+                            <option value="active">✅ Только активные (не заблокированные)</option>
+                            <option value="selected">👥 Выбранные пользователи (укажите ID через запятую)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="selectedUsersInput" style="display: none;">
+                        <label>ID пользователей (через запятую)</label>
+                        <input type="text" id="selectedUsersIds" placeholder="123, 456, 789">
+                    </div>
+                    <button class="btn-primary" id="sendNotificationBtn" style="width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Отправить рассылку
+                    </button>
+                </div>
+                
+                <div style="margin-top: 32px;">
+                    <h3><i class="fas fa-history"></i> История отправленных уведомлений</h3>
+                    <div id="sentNotificationsHistory" style="background: white; border-radius: 20px; padding: 20px; margin-top: 16px;">
+                        <p style="text-align: center; color: #6c757d;">История будет появляться здесь после отправки</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления/редактирования товара с вариантами -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Добавить товар</h3>
+                <button class="close-modal" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+                    <div class="form-group"><label>Название *</label><input type="text" id="productName" required></div>
+                    <div class="form-group"><label>Категория *</label><input type="text" id="productCategory" required></div>
+                    <div class="form-group"><label>Краткое описание</label><input type="text" id="productShortDesc"></div>
+                    <div class="form-group"><label>Полное описание *</label><textarea id="productFullDesc" rows="4" required></textarea></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Базовая цена *</label><input type="number" id="productPrice" required></div>
+                        <div class="form-group"><label>Изображение URL</label><input type="text" id="productImage"></div>
+                    </div>
+                    <div class="form-group"><label>Галерея (URL через запятую)</label><textarea id="productGallery" rows="2"></textarea></div>
+                    <div class="form-group"><label>Характеристики (построчно)</label><textarea id="productFeatures" rows="4"></textarea></div>
+                    
+                    <!-- Секция вариантов товара (цвет, размер и т.д.) -->
+                    <div class="variants-section">
+                        <div class="variants-header">
+                            <h4><i class="fas fa-tags"></i> Варианты товара</h4>
+                            <button type="button" class="add-variant-btn" id="addVariantBtn">
+                                <i class="fas fa-plus"></i> Добавить вариант
+                            </button>
+                        </div>
+                        <div id="variantsList"></div>
+                        <p style="font-size: 0.7rem; color: #6c757d; margin-top: 8px;">
+                            <i class="fas fa-info-circle"></i> Примеры: "Красный, XL", "Синий, M", "Зеленый, L"
+                        </p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelBtn">Отмена</button>
+                <button class="btn-primary" id="saveBtn">Сохранить товар</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="userViewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user"></i> Данные пользователя</h3>
+                <button class="close-modal" id="closeUserViewModal">&times;</button>
+            </div>
+            <div class="modal-body" id="userViewContent"></div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeUserViewBtn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== КОНФИГУРАЦИЯ JSONBin.io ==========
+        const JSONBIN_CONFIG = {
+            PRODUCTS_BIN_ID: "69dd3d5daaba882197f5c316",
+            USERS_BIN_ID: "69de7ba0856a68218933614c",
+            API_KEY: "$2a$10$6y01Iebw0r.mdVsi896kWucQh1Fm.0WL0UDZMORskX/qjbrhRNwCK",
+            BASE_URL: "https://api.jsonbin.io/v3/b"
+        };
+
+        let products = [];
+        let usersCache = [];
+        let isLoggedIn = false;
+        let sentNotificationsHistory = [];
+        let variantsArray = [];
+
+        // ========== РАБОТА С ВАРИАНТАМИ ==========
+        function renderVariantsList() {
+            const container = document.getElementById('variantsList');
+            if (!container) return;
+            
+            if (variantsArray.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">Нет вариантов. Нажмите "Добавить вариант"</p>';
+                return;
+            }
+            
+            container.innerHTML = variantsArray.map((variant, index) => `
+                <div class="variant-item" data-index="${index}">
+                    <div class="variant-name">
+                        <input type="text" placeholder="Название (цвет/размер)" value="${escapeHtml(variant.name)}" onchange="updateVariant(${index}, 'name', this.value)">
+                    </div>
+                    <div class="variant-price">
+                        <input type="number" placeholder="Цена" value="${variant.price || ''}" onchange="updateVariant(${index}, 'price', this.value)">
+                    </div>
+                    <div class="variant-stock">
+                        <input type="number" placeholder="Кол-во" value="${variant.stock || ''}" onchange="updateVariant(${index}, 'stock', this.value)">
+                    </div>
+                    <button class="remove-variant" onclick="removeVariant(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+        
+        function addVariant() {
+            variantsArray.push({ name: '', price: '', stock: '' });
+            renderVariantsList();
+        }
+        
+        function updateVariant(index, field, value) {
+            if (variantsArray[index]) {
+                variantsArray[index][field] = value;
+            }
+        }
+        
+        function removeVariant(index) {
+            variantsArray.splice(index, 1);
+            renderVariantsList();
+        }
+        
+        function loadVariantsFromProduct(product) {
+            if (product.variants && product.variants.length) {
+                variantsArray = [...product.variants];
+            } else {
+                variantsArray = [];
+            }
+            renderVariantsList();
+        }
+
+        // ========== РАБОТА С ТОВАРАМИ ==========
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.PRODUCTS_BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': JSONBIN_CONFIG.API_KEY }
+                });
+                const data = await response.json();
+                products = data.record?.products || [];
+                renderProductsTable();
+            } catch (error) {
+                console.error('Ошибка загрузки товаров:', error);
+                products = [];
+                renderProductsTable();
+            }
+        }
+
+        async function saveProducts() {
+            await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.PRODUCTS_BIN_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'X-Master-Key': JSONBIN_CONFIG.API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ products: products })
+            });
+        }
+
+        function renderProductsTable() {
+            const tbody = document.getElementById('productsTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = products.map(p => `
+                <tr>
+                    <td>${p.id}</td>
+                    <td><img class="product-img" src="${p.image}" onerror="this.src='https://placehold.co/50x50/e8f5e9/2e7d32?text=No'"></td>
+                    <td><strong>${escapeHtml(p.name)}</strong><br><small>${escapeHtml(p.shortDescription || '')}</small></td>
+                    <td>${p.category}</td>
+                    <td>${p.price.toLocaleString()} ₽</td>
+                    <td>
+                        ${p.variants && p.variants.length ? 
+                            p.variants.map(v => `<span class="variant-tag">${escapeHtml(v.name)}</span>`).join('') : 
+                            '<span style="color:#6c757d;">—</span>'}
+                    </td>
+                    <td>
+                        <button class="edit-btn" onclick="editProduct(${p.id})"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function editProduct(id) {
+            const p = products.find(p => p.id === id);
+            if (p) {
+                document.getElementById('modalTitle').innerHTML = 'Редактировать товар';
+                document.getElementById('productId').value = p.id;
+                document.getElementById('productName').value = p.name;
+                document.getElementById('productCategory').value = p.category;
+                document.getElementById('productShortDesc').value = p.shortDescription || '';
+                document.getElementById('productFullDesc').value = p.fullDescription;
+                document.getElementById('productPrice').value = p.price;
+                document.getElementById('productImage').value = p.image || '';
+                document.getElementById('productGallery').value = (p.gallery || []).join(', ');
+                document.getElementById('productFeatures').value = (p.features || []).join('\n');
+                
+                // Загружаем варианты
+                loadVariantsFromProduct(p);
+                
+                document.getElementById('productModal').style.display = 'flex';
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (confirm('Удалить товар?')) {
+                products = products.filter(p => p.id !== id);
+                await saveProducts();
+                renderProductsTable();
+                showNotification('Товар удален');
+            }
+        }
+
+        async function saveProduct() {
+            const id = document.getElementById('productId').value;
+            
+            // Фильтруем пустые варианты
+            const validVariants = variantsArray.filter(v => v.name.trim() !== '');
+            
+            const productData = {
+                name: document.getElementById('productName').value,
+                category: document.getElementById('productCategory').value,
+                shortDescription: document.getElementById('productShortDesc').value,
+                fullDescription: document.getElementById('productFullDesc').value,
+                price: parseInt(document.getElementById('productPrice').value),
+                image: document.getElementById('productImage').value || 'https://placehold.co/600x600/e8f5e9/2e7d32?text=Product',
+                gallery: document.getElementById('productGallery').value.split(',').map(s => s.trim()).filter(s => s),
+                features: document.getElementById('productFeatures').value.split('\n').filter(s => s.trim()),
+                variants: validVariants
+            };
+            
+            if (!productData.name || !productData.category || !productData.fullDescription || !productData.price) {
+                alert('Заполните обязательные поля');
+                return;
+            }
+            
+            if (id) {
+                const index = products.findIndex(p => p.id == id);
+                if (index !== -1) {
+                    products[index] = { ...products[index], ...productData, id: parseInt(id) };
+                }
+            } else {
+                const newId = Math.max(...products.map(p => p.id), 0) + 1;
+                products.push({ ...productData, id: newId });
+            }
+            
+            await saveProducts();
+            renderProductsTable();
+            closeProductModal();
+            showNotification('Товар сохранен');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            variantsArray = [];
+            renderVariantsList();
+        }
+
+        // ========== РАБОТА С ПОЛЬЗОВАТЕЛЯМИ ==========
+        async function loadUsersFromCloud() {
+            try {
+                const response = await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.USERS_BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': JSONBIN_CONFIG.API_KEY }
+                });
+                const data = await response.json();
+                usersCache = data.record?.users || [];
+                renderUsersTable();
+            } catch (error) {
+                console.error('Ошибка загрузки пользователей:', error);
+                usersCache = [];
+                renderUsersTable();
+            }
+        }
+
+        async function saveUsersToCloud() {
+            await fetch(`${JSONBIN_CONFIG.BASE_URL}/${JSONBIN_CONFIG.USERS_BIN_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'X-Master-Key': JSONBIN_CONFIG.API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ users: usersCache })
+            });
+        }
+
+        function renderUsersTable() {
+            const tbody = document.getElementById('adminUsersList');
+            if (!tbody) return;
+            
+            tbody.innerHTML = usersCache.map(user => `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>
+                        <strong>${escapeHtml(user.name)}</strong><br>
+                        <small>${new Date(user.createdAt).toLocaleDateString()}</small>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.notifications?.length || 0}</td>
+                    <td>
+                        <span class="user-status ${user.isBanned ? 'banned' : 'active'}">
+                            ${user.isBanned ? 'Заблокирован' : 'Активен'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="view-btn" onclick="viewUser(${user.id})" title="Просмотреть данные"><i class="fas fa-eye"></i></button>
+                        <button class="edit-btn" onclick="toggleBanUser(${user.id}, ${!user.isBanned})" title="${user.isBanned ? 'Разблокировать' : 'Заблокировать'}">
+                            <i class="fas fa-${user.isBanned ? 'check' : 'ban'}"></i>
+                        </button>
+                        <button class="delete-btn" onclick="deleteUserAccount(${user.id})" title="Удалить аккаунт"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function viewUser(userId) {
+            await loadUsersFromCloud();
+            const user = usersCache.find(u => u.id === userId);
+            if (user) {
+                const content = document.getElementById('userViewContent');
+                content.innerHTML = `
+                    <div class="user-detail-card">
+                        <h4><i class="fas fa-user-circle"></i> Основная информация</h4>
+                        <p><strong>ID:</strong> ${user.id}</p>
+                        <p><strong>Имя:</strong> ${escapeHtml(user.name)}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Телефон:</strong> ${user.phone}</p>
+                        <p><strong>Дата регистрации:</strong> ${new Date(user.createdAt).toLocaleString()}</p>
+                        <p><strong>Статус:</strong> ${user.isBanned ? 'Заблокирован' : 'Активен'}</p>
+                    </div>
+                    <div class="user-detail-card">
+                        <h4><i class="fas fa-lock"></i> Данные для входа</h4>
+                        <p><strong>Пароль (в открытом виде):</strong></p>
+                        <div class="password-view">${atob(user.password)}</div>
+                    </div>
+                    <div class="user-detail-card">
+                        <h4><i class="fas fa-bell"></i> Уведомления (${(user.notifications || []).length})</h4>
+                        ${(user.notifications || []).length === 0 ? '<p>Нет уведомлений</p>' : 
+                            (user.notifications || []).slice(0, 5).map(n => `
+                                <div style="padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                                    <strong>${escapeHtml(n.title)}</strong><br>
+                                    <small>${escapeHtml(n.message)}</small><br>
+                                    <span style="font-size: 0.7rem; color: #6c757d;">${new Date(n.createdAt).toLocaleString()}</span>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                `;
+                document.getElementById('userViewModal').style.display = 'flex';
+            }
+        }
+
+        async function toggleBanUser(userId, isBanned) {
+            await loadUsersFromCloud();
+            const index = usersCache.findIndex(u => u.id === userId);
+            if (index !== -1) {
+                usersCache[index].isBanned = isBanned;
+                await saveUsersToCloud();
+                renderUsersTable();
+                showNotification(isBanned ? 'Пользователь заблокирован' : 'Пользователь разблокирован');
+            }
+        }
+
+        async function deleteUserAccount(userId) {
+            if (confirm('Удалить аккаунт пользователя? Все данные будут потеряны!')) {
+                await loadUsersFromCloud();
+                usersCache = usersCache.filter(u => u.id !== userId);
+                await saveUsersToCloud();
+                renderUsersTable();
+                showNotification('Пользователь удален');
+            }
+        }
+
+        // ========== РАССЫЛКА ==========
+        async function sendNotificationToAll(notification, onlyActive = true) {
+            await loadUsersFromCloud();
+            let sentCount = 0;
+            
+            for (const user of usersCache) {
+                if (!onlyActive || !user.isBanned) {
+                    if (!user.notifications) {
+                        user.notifications = [];
+                    }
+                    user.notifications.unshift({
+                        id: Date.now() + sentCount,
+                        title: notification.title,
+                        message: notification.message,
+                        type: notification.type,
+                        isRead: false,
+                        createdAt: new Date().toISOString()
+                    });
+                    sentCount++;
+                }
+            }
+            
+            await saveUsersToCloud();
+            return sentCount;
+        }
+
+        async function sendNotificationToSelected(notification, userIds) {
+            await loadUsersFromCloud();
+            let sentCount = 0;
+            
+            for (const userId of userIds) {
+                const index = usersCache.findIndex(u => u.id === userId);
+                if (index !== -1) {
+                    if (!usersCache[index].notifications) {
+                        usersCache[index].notifications = [];
+                    }
+                    usersCache[index].notifications.unshift({
+                        id: Date.now() + sentCount,
+                        title: notification.title,
+                        message: notification.message,
+                        type: notification.type,
+                        isRead: false,
+                        createdAt: new Date().toISOString()
+                    });
+                    sentCount++;
+                }
+            }
+            
+            await saveUsersToCloud();
+            return sentCount;
+        }
+
+        async function sendBroadcast() {
+            const type = document.getElementById('notifType').value;
+            const title = document.getElementById('notifTitle').value.trim();
+            const message = document.getElementById('notifMessage').value.trim();
+            const recipients = document.getElementById('notifRecipients').value;
+            
+            if (!title || !message) {
+                alert('Заполните заголовок и текст уведомления');
+                return;
+            }
+            
+            const notification = { title, message, type };
+            let sentCount = 0;
+            let recipientText = '';
+            
+            if (recipients === 'all') {
+                sentCount = await sendNotificationToAll(notification, false);
+                recipientText = 'всем пользователям';
+            } else if (recipients === 'active') {
+                sentCount = await sendNotificationToAll(notification, true);
+                recipientText = 'активным пользователям';
+            } else if (recipients === 'selected') {
+                const idsText = document.getElementById('selectedUsersIds').value;
+                const userIds = idsText.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+                if (userIds.length === 0) {
+                    alert('Введите ID пользователей');
+                    return;
+                }
+                sentCount = await sendNotificationToSelected(notification, userIds);
+                recipientText = `${userIds.length} пользователям (отправлено: ${sentCount})`;
+            }
+            
+            sentNotificationsHistory.unshift({
+                id: Date.now(),
+                type,
+                title,
+                message,
+                recipients: recipientText,
+                sentCount,
+                createdAt: new Date().toLocaleString()
+            });
+            renderSentHistory();
+            localStorage.setItem('whieda_notifications_history', JSON.stringify(sentNotificationsHistory));
+            
+            showNotification(`✅ Рассылка отправлена! Получили: ${sentCount} пользователей`);
+            
+            document.getElementById('notifTitle').value = '';
+            document.getElementById('notifMessage').value = '';
+            document.getElementById('selectedUsersIds').value = '';
+        }
+
+        function renderSentHistory() {
+            const container = document.getElementById('sentNotificationsHistory');
+            if (!container) return;
+            
+            if (sentNotificationsHistory.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6c757d;">История будет появляться здесь после отправки</p>';
+                return;
+            }
+            
+            container.innerHTML = sentNotificationsHistory.map(item => `
+                <div style="padding: 16px; border-bottom: 1px solid #e9ecef;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong>${item.createdAt}</strong>
+                        <span style="background: #e9ecef; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem;">${item.recipients}</span>
+                    </div>
+                    <div style="font-weight: 600;">${escapeHtml(item.title)}</div>
+                    <div style="color: #6c757d; font-size: 0.85rem;">${escapeHtml(item.message)}</div>
+                    <div style="margin-top: 8px; font-size: 0.7rem; color: #1a5f4b;">Отправлено: ${item.sentCount} пользователей</div>
+                </div>
+            `).join('');
+        }
+
+        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showNotification(text) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.textContent = text;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 2000);
+        }
+
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(`${tabName}Tab`).classList.add('active');
+                    
+                    if (tabName === 'users') loadUsersFromCloud();
+                });
+            });
+        }
+
+        // ========== АВТОРИЗАЦИЯ ==========
+        function checkAuth() {
+            if (isLoggedIn) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadProducts();
+                loadUsersFromCloud();
+                initTabs();
+                
+                const savedHistory = localStorage.getItem('whieda_notifications_history');
+                if (savedHistory) {
+                    sentNotificationsHistory = JSON.parse(savedHistory);
+                    renderSentHistory();
+                }
+            } else {
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('adminPanel').style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('admin_logged_in') === 'true') {
+                isLoggedIn = true;
+            }
+            checkAuth();
+
+            document.getElementById('loginBtn').onclick = () => {
+                const pass = document.getElementById('adminPassword').value;
+                if (pass === 'admin123') {
+                    isLoggedIn = true;
+                    sessionStorage.setItem('admin_logged_in', 'true');
+                    checkAuth();
+                } else {
+                    alert('Неверный пароль');
+                }
+            };
+
+            document.getElementById('logoutBtn').onclick = () => {
+                isLoggedIn = false;
+                sessionStorage.removeItem('admin_logged_in');
+                checkAuth();
+            };
+
+            document.getElementById('addProductBtn').onclick = () => {
+                document.getElementById('modalTitle').innerHTML = 'Добавить товар';
+                document.getElementById('productForm').reset();
+                document.getElementById('productId').value = '';
+                variantsArray = [];
+                renderVariantsList();
+                document.getElementById('productModal').style.display = 'flex';
+            };
+
+            document.getElementById('saveBtn').onclick = saveProduct;
+            document.getElementById('cancelBtn').onclick = closeProductModal;
+            document.getElementById('closeModalBtn').onclick = closeProductModal;
+            document.getElementById('addVariantBtn').onclick = addVariant;
+            
+            document.getElementById('closeUserViewBtn').onclick = () => {
+                document.getElementById('userViewModal').style.display = 'none';
+            };
+            document.getElementById('closeUserViewModal').onclick = () => {
+                document.getElementById('userViewModal').style.display = 'none';
+            };
+            
+            document.getElementById('sendNotificationBtn').onclick = sendBroadcast;
+            
+            document.getElementById('notifRecipients').onchange = function() {
+                const selectedInput = document.getElementById('selectedUsersInput');
+                selectedInput.style.display = this.value === 'selected' ? 'block' : 'none';
+            };
+            
+            window.onclick = (e) => {
+                if (e.target.classList.contains('modal')) {
+                    closeProductModal();
+                    document.getElementById('userViewModal').style.display = 'none';
+                }
+            };
+        });
+    </script>
+</body>
+</html>

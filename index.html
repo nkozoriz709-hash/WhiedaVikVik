@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="Интернет-магазин продукции WHIEDA. Товары для здоровья, красоты и чистоты от официального дистрибьютора Whieda VikVik.">
+    <title>Whieda VikVik — Здоровье и красота</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="gradient-bg"></div>
+
+       <!-- Шапка сайта (ФИКСИРОВАННАЯ) -->
+    <header>
+        <div class="container">
+            <div class="header-inner">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>WHIEDA <span>VikVik</span></h1>
+                        <p>официальный дистрибьютор</p>
+                    </div>
+                </div>
+                <nav class="main-nav">
+                    <a href="#home">Главная</a>
+                    <a href="#catalog">Каталог</a>
+                    <a href="#contacts">Контакты</a>
+                </nav>
+                <div class="header-actions">
+                    <button class="profile-icon-btn" id="profileIconBtn">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <button class="cart-btn" id="cartBtn">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Мобильное меню -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="logo-text">
+                    <h3>WHIEDA VikVik</h3>
+                </div>
+            </div>
+            <button class="close-menu" id="closeMenuBtn">&times;</button>
+        </div>
+        <nav class="mobile-nav">
+            <a href="#home">Главная</a>
+            <a href="#catalog">Каталог</a>
+            <a href="#contacts">Контакты</a>
+            <a href="#" id="profileBtnMobile"><i class="fas fa-user"></i> Личный кабинет</a>
+        </nav>
+    </div>
+
+    <!-- Герой секция с изображением -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>WHIEDA <span class="highlight">VikVik</span></h1>
+                    <p>Официальный дистрибьютор продукции WHIEDA. Натуральные БАДы, качественная косметика и безопасная бытовая химия.</p>
+                    <a href="#catalog" class="btn-primary">В каталог <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="hero-image">
+                    <div class="hero-image-wrapper">
+                        <img src="https://i.ibb.co/6RqbbGV8/90-B0-E9-F1-67-A7-448-B-8-B6-F-AE71-FDA871-C6-1-201-a.jpg" alt="WHIEDA продукция">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Каталог товаров -->
+    <section id="catalog" class="catalog">
+        <div class="container">
+            <div class="section-header">
+                <h2>Каталог товаров</h2>
+                <p>Качество, которому доверяют</p>
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <div style="text-align: center; padding: 60px;">Загрузка товаров...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer id="contacts">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div class="logo-text">
+                            <h3>WHIEDA <span>VikVik</span></h3>
+                        </div>
+                    </div>
+                    <p>Официальный дистрибьютор продукции WHIEDA. Только оригинальные товары напрямую от производителя.</p>
+                    <div class="contact-info">
+                        <p><i class="fab fa-telegram"></i> Telegram: <a href="https://t.me/order_101" target="_blank" class="telegram-link">@order_101</a></p>
+                        <p><i class="fas fa-envelope"></i> Email: whieda4@gmail.com</p>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="privacy.html">Сертификаты</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Whieda VikVik. Все права защищены. Официальный дистрибьютор.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальное окно корзины -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content cart-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-shopping-bag"></i> Корзина</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems"></div>
+                <div class="cart-summary">
+                    <div class="cart-total">
+                        <span>Итого:</span>
+                        <strong id="cartTotal">0 ₽</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="clearCart">Очистить</button>
+                <button class="btn-primary" id="checkoutBtn">Оформить заказ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно оформления заказа -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content order-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-clipboard-list"></i> Оформление заказа</h3>
+                <button class="close-modal" id="closeOrderModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label for="customerName">Ваше имя *</label>
+                        <input type="text" id="customerName" required placeholder="Иван Иванов">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Телефон *</label>
+                        <input type="tel" id="customerPhone" required placeholder="+7 (999) 123-45-67">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerAddress">Адрес доставки *</label>
+                        <textarea id="customerAddress" rows="3" required placeholder="Город, улица, дом, квартира"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerComment">Комментарий</label>
+                        <textarea id="customerComment" rows="2" placeholder="Пожелания по доставке"></textarea>
+                    </div>
+                </form>
+                <div class="order-preview">
+                    <h4>Ваш заказ</h4>
+                    <div id="orderPreview"></div>
+                    <div class="order-preview-total">
+                        <strong>Итого: <span id="orderPreviewTotal">0 ₽</span></strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelOrder">Отмена</button>
+                <button class="btn-primary" id="submitOrder">Отправить заказ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно товара -->
+    <div id="productModal" class="modal product-modal">
+        <div class="modal-content product-detail-modal">
+            <button class="close-product-modal" id="closeProductModalBtn">&times;</button>
+            <div class="product-detail-container">
+                <div class="product-gallery">
+                    <div class="main-image">
+                        <img id="productMainImage" src="" alt="">
+                    </div>
+                    <div class="thumbnail-list" id="thumbnailList"></div>
+                </div>
+                <div class="product-detail-info">
+                    <div class="product-category" id="productCategory"></div>
+                    <h2 id="productName"></h2>
+                    <div class="product-price-detail">
+                        <span class="current-price" id="productPrice"></span>
+                    </div>
+                    <div class="product-variants" id="productVariants">
+                        <h4>Выберите вариант:</h4>
+                        <div class="variants-buttons" id="variantsButtons"></div>
+                    </div>
+                    <div class="product-actions">
+                        <div class="quantity-selector">
+                            <button class="qty-btn" id="decreaseQty">-</button>
+                            <input type="number" id="productQty" value="1" min="1" readonly>
+                            <button class="qty-btn" id="increaseQty">+</button>
+                        </div>
+                        <button class="btn-primary add-to-cart-detail" id="addToCartDetail">
+                            <i class="fas fa-shopping-cart"></i> В корзину
+                        </button>
+                    </div>
+                    <div class="product-description-full">
+                        <h4>Описание</h4>
+                        <p id="productFullDescription"></p>
+                    </div>
+                    <div class="product-features">
+                        <h4>Характеристики</h4>
+                        <ul id="productFeatures"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно входа/регистрации -->
+    <div id="authModal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="modal-header">
+                <h3 id="authTitle"><i class="fas fa-sign-in-alt"></i> Вход в личный кабинет</h3>
+                <button class="close-modal" id="closeAuthModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="loginFormContent">
+                    <div class="form-group">
+                        <label>Email или телефон</label>
+                        <input type="text" id="loginEmail" placeholder="example@mail.com или +7...">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="loginPassword" placeholder="Введите пароль">
+                    </div>
+                    <button class="btn-primary" id="loginBtn" style="width: 100%;">Войти</button>
+                    <p style="text-align: center; margin-top: 16px;">
+                        Нет аккаунта? <a href="#" id="showRegisterBtn">Зарегистрироваться</a>
+                    </p>
+                    <p style="text-align: center; font-size: 0.8rem; color: #6c757d;">После нажатия на Войти/Зарегистрироваться немного подождите</p>
+                </div>
+                
+                <div id="registerFormContent" style="display: none;">
+                    <div class="form-group">
+                        <label>Имя *</label>
+                        <input type="text" id="regName" placeholder="Иван">
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="regEmail" placeholder="example@mail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон *</label>
+                        <input type="tel" id="regPhone" placeholder="+7 (999) 123-45-67">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль *</label>
+                        <input type="password" id="regPassword" placeholder="Минимум 6 символов">
+                    </div>
+                    <div class="form-group">
+                        <label>Подтверждение пароля *</label>
+                        <input type="password" id="regPasswordConfirm" placeholder="Повторите пароль">
+                    </div>
+                    <button class="btn-primary" id="registerBtn" style="width: 100%;">Зарегистрироваться</button>
+                    <p style="text-align: center; margin-top: 16px;">
+                        Уже есть аккаунт? <a href="#" id="showLoginBtn">Войти</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно личного кабинета -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content profile-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-circle"></i> Личный кабинет</h3>
+                <button class="close-modal" id="closeProfileModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="profileInfo">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="profile-details">
+                        <p><strong>Имя:</strong> <span id="profileName"></span></p>
+                        <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                        <p><strong>Телефон:</strong> <span id="profilePhone"></span></p>
+                        <p><strong>Дата регистрации:</strong> <span id="profileDate"></span></p>
+                    </div>
+                </div>
+                
+                <div class="profile-tabs">
+                    <button class="tab-btn active" data-tab="notifications">Уведомления</button>
+                    <button class="tab-btn" data-tab="settings">Настройки</button>
+                </div>
+                
+                <div id="notificationsTab" class="profile-tab-content active">
+                    <div id="notificationsList" class="notifications-list">
+                        <p style="text-align: center; color: #6c757d;">У вас нет уведомлений</p>
+                    </div>
+                </div>
+                
+                <div id="settingsTab" class="profile-tab-content" style="display: none;">
+                    <div class="form-group">
+                        <label>Изменить имя</label>
+                        <input type="text" id="editName" placeholder="Ваше имя">
+                    </div>
+                    <div class="form-group">
+                        <label>Изменить телефон</label>
+                        <input type="tel" id="editPhone" placeholder="+7...">
+                    </div>
+                    <div class="form-group">
+                        <label>Изменить email</label>
+                        <input type="email" id="editEmail" placeholder="example@mail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Новый пароль</label>
+                        <input type="password" id="editPassword" placeholder="Оставьте пустым, если не хотите менять">
+                    </div>
+                    <button class="btn-primary" id="updateProfileBtn">Сохранить изменения</button>
+                    <button class="btn-secondary" id="logoutBtn" style="margin-top: 16px; width: 100%;">Выйти из аккаунта</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
